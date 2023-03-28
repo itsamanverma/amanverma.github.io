@@ -1,0 +1,51 @@
+import { padStart } from "./padding";
+
+
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jui', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/**
+ * @name getDateFormat formats the simple date string to required date format
+ * @param {string} dateString date string which needs to be converted 
+ * @param {string} format string which represents the format of date
+ */
+
+export const getDateFormat = (dateString, format) => {
+    const dateObj = new Date(dateString);
+    const fullYear = dateObj.getFullYear();
+    const givenMonth = dateObj.getMonth();
+    const givenDate = dateObj.getDate();
+
+    const formattedDate = {};
+
+    const year  = (format.match(/y+/ig) || [])[0];
+    const month = (format.match(/m+/ig) || [])[0];
+    const date  = (format.match(/d+/ig) || [])[0];
+    
+    //set year replacer
+    if(year) {
+        if (year.length === 4){
+            formattedDate[year] = fullYear.toString();
+        }else{
+            formattedDate[year] = fullYear.toString().substring(4 - Math.max(year.length, 2));
+        }
+    }
+
+    //set month replacer
+    if (month) {
+        if (month.length === 3) {
+            formattedDate[month] = months[month];
+        } else {
+            formattedDate[month] = padStart(givenMonth + 1, '0', month.length);
+        }
+    }
+
+    //set date replacer
+    if (date) {
+        formattedDate[date] = padStart(givenDate, '0', date.length);
+    }
+
+    return format
+        .replace(year, formattedDate[year])
+        .replace(month, formattedDate[month])
+        .replace(date, formattedDate[date]);
+}
